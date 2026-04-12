@@ -78,24 +78,33 @@ if data.empty:
 # =============================
 # LIVE PRICE
 # =============================
+# =============================
+# LIVE PRICE (SAFE)
+# =============================
 def get_live_price():
     try:
         df = yf.download("^NSEI", period="1d", interval="1m", progress=False)
 
-        # 🔥 FIX 1: Check empty
         if df.empty or "Close" not in df.columns:
             return None
 
         df.dropna(inplace=True)
 
-        # 🔥 FIX 2: Check again
         if df.empty:
             return None
 
         return float(df["Close"].iloc[-1])
 
-    except Exception as e:
+    except:
         return None
+
+
+# 🔥 ALWAYS DEFINE VARIABLE
+live_price = get_live_price()
+
+# 🔥 FALLBACK (CRITICAL)
+if live_price is None:
+    live_price = float(data['close'].iloc[-1])
 
 # =============================
 # INDICATORS
