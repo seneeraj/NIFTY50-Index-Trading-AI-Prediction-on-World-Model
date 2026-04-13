@@ -42,10 +42,10 @@ def get_data(interval, period):
 
     if interval == "2h":
         base_interval = "1h"
-        resample = "2H"
+        resample = "2h"
     elif interval == "4h":
         base_interval = "1h"
-        resample = "4H"
+        resample = "4h"
 
     df = yf.download("^NSEI", interval=base_interval, period=period, progress=False)
 
