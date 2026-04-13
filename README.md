@@ -1,5 +1,5 @@
 
-# NIFTY50 Index Trading AI Prediction on World Model with AI Assitant
+# NIFTY50 Index Trading AI Prediction on World Model with AI Assistant
 
 An advanced **AI-powered trading decision system** for the NIFTY50 index, combining:
 
