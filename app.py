@@ -184,15 +184,20 @@ structure = detect_structure(data)
 # =============================
 # SUPPORT & RESISTANCE
 # =============================
-def get_support_resistance(df, window=20):
-    df['support'] = df['Low'].rolling(window).min()
-    df['resistance'] = df['High'].rolling(window).max()
-    return df
+# =============================
+# SMART SUPPORT / RESISTANCE
+# =============================
+def get_support_resistance(df, window=10):
 
-data = get_support_resistance(data)
+    recent = df.tail(window)
 
-latest_support = float(data['support'].iloc[-1])
-latest_resistance = float(data['resistance'].iloc[-1])
+    support = float(recent['Low'].min())
+    resistance = float(recent['High'].max())
+
+    return support, resistance
+
+
+latest_support, latest_resistance = get_support_resistance(data, window=10)
 
 
 # =============================
