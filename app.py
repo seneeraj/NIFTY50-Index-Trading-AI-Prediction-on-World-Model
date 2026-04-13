@@ -78,9 +78,6 @@ if data.empty:
 # =============================
 # LIVE PRICE
 # =============================
-# =============================
-# LIVE PRICE (SAFE)
-# =============================
 def get_live_price():
     try:
         df = yf.download("^NSEI", period="1d", interval="1m", progress=False)
@@ -184,11 +181,45 @@ structure = detect_structure(data)
 # =============================
 # SUPPORT & RESISTANCE
 # =============================
-def get_support_resistance(df, window=20):
-    df['support'] = df['Low'].rolling(window).min()
-    df['resistance'] = df['High'].rolling(window).max()
+# =============================
+# SUPPORT & RESISTANCE (SMART LOGIC)
+# =============================
+def get_support_resistance(df):
+
+    highs = df['High']
+    lows = df['Low']
+
+    # 🔹 Swing highs & lows
+    swing_highs = highs[(highs.shift(1) < highs) & (highs.shift(-1) < highs)]
+    swing_lows = lows[(lows.shift(1) > lows) & (lows.shift(-1) > lows)]
+
+    # 🔹 Default fallback
+    resistance = float(highs.iloc[-1])
+    support = float(lows.iloc[-1])
+
+    if not swing_highs.empty:
+        resistance = float(swing_highs.tail(3).mean())
+
+    if not swing_lows.empty:
+        support = float(swing_lows.tail(3).mean())
+
+    # 🔹 Trend adjustment (VERY IMPORTANT)
+    if "DOWN" in trend:
+        resistance = max(resistance, highs.tail(5).max())
+        support = lows.tail(10).min()
+
+    elif "UP" in trend:
+        support = min(support, lows.tail(5).min())
+        resistance = highs.tail(10).max()
+
+    # 🔹 Add back to dataframe (so chart still works)
+    df['support'] = support
+    df['resistance'] = resistance
+
     return df
 
+
+# SAME CALL (DO NOT CHANGE)
 data = get_support_resistance(data)
 
 latest_support = float(data['support'].iloc[-1])
