@@ -96,21 +96,18 @@ def get_live_price():
         return None
 
 
-# 🔥 ALWAYS DEFINE VARIABLE
 live_price = get_live_price()
 
-# 🔥 FALLBACK (CRITICAL)
-    # If market closed → use daily close
-if period == "1d" and interval == "1m":
+# 🔥 If Yahoo live fails → fallback
+if live_price is None:
+    live_price = float(data['close'].iloc[-1])
+
+# 🔥 If market closed → override with official close
+elif period == "1d" and interval == "1m":
     daily = yf.download("^NSEI", period="5d", interval="1d", progress=False)
-    
+
     if not daily.empty:
         live_price = float(daily["Close"].iloc[-1])
-    else:
-        live_price = float(df["Close"].iloc[-1])
-
-else:
-    live_price = float(df["Close"].iloc[-1])
 
 # =============================
 # INDICATORS
