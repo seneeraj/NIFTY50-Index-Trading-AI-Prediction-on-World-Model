@@ -100,7 +100,6 @@ def get_live_price():
 live_price = get_live_price()
 
 # 🔥 FALLBACK (CRITICAL)
-if live_price is None:
     # If market closed → use daily close
 if period == "1d" and interval == "1m":
     daily = yf.download("^NSEI", period="5d", interval="1d", progress=False)
