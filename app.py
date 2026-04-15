@@ -127,9 +127,12 @@ data['EMA26'] = data['close'].ewm(span=26).mean()
 data['MACD'] = data['EMA12'] - data['EMA26']
 
 data.dropna(inplace=True)
-
-latest_rsi = float(data['RSI'].iloc[-1])
-latest_macd = float(data['MACD'].iloc[-1])
+if data.empty or len(data) < 5:
+    st.warning("⚠️ Not enough data for selected interval/period")
+    st.stop()
+    
+latest_rsi = float(data['RSI'].iloc[-1]) if not data.empty else 50
+latest_macd = float(data['MACD'].iloc[-1]) if not data.empty else 0
 
 
 
